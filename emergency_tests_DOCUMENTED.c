@@ -38,20 +38,13 @@ static int tests_failed = 0;
         tests_passed++; \
     } while(0)
 
-// RIGHT-BICEP Testing Paradigm Implementation
-// R - Right: Are the results right?
-// I - Inverse: Can you check inverse relationships?
-// C - Cross-check: Can you cross-check results using other means?
-// E - Error conditions: Can you force error conditions?
-// P - Performance: Is it fast enough, scalable?
-
 // ====================
 // BASIC FUNCTIONALITY TESTS
 // ====================
 
 /*
  * Test: Class initialization
- * Verifies that the module can only be initialized once (singleton pattern)
+ * Verifies that the module can only be initialized once
  */
 void test_class_init_right() {
     printf("\n[RIGHT] Testing EmergencyNode_class_init basic functionality...\n");
@@ -69,7 +62,6 @@ void test_class_init_right() {
 
 /*
  * Test: Node initialization
- * Verifies that node is properly zeroed out on init
  */
 void test_node_init_right() {
     printf("\n[RIGHT] Testing EmergencyNode_init...\n");
@@ -91,7 +83,7 @@ void test_node_init_right() {
 
 /*
  * Test: Raising emergencies
- * Verifies that emergencies can be raised and are idempotent
+ * Verifies that emergencies can be raised
  */
 void test_raise_emergency_right() {
     printf("\n[RIGHT] Testing EmergencyNode_raise...\n");
@@ -105,7 +97,7 @@ void test_raise_emergency_right() {
     TEST_ASSERT(node.emergency_counter == 1, "Counter should be 1");
     TEST_ASSERT((node.emergency_buffer[0] & (1 << 5)) != 0, "Bit 5 should be set");
 
-    // Raise same emergency again (idempotent)
+    // Raise same emergency again
     result = EmergencyNode_raise(&node, 5);
     TEST_ASSERT(result == 0, "Raise should succeed");
     TEST_ASSERT(node.emergency_counter == 1, "Counter should still be 1");
@@ -220,7 +212,7 @@ void test_boundary_conditions_error() {
     EmergencyNode_t node;
     EmergencyNode_init(&node);
 
-    // Test maximum valid emergency ID (NUM_EMERGENCY_BUFFER * 8 - 1 = 63)
+
     int8_t result = EmergencyNode_raise(&node, 63);
     TEST_ASSERT(result == 0, "Max valid ID should succeed");
 
@@ -236,7 +228,6 @@ void test_boundary_conditions_error() {
 
 /*
  * Test: Solve non-existent emergency
- * Verifies graceful handling when solving emergency that wasn't raised
  */
 void test_solve_nonexistent_error() {
     printf("\n[ERROR] Testing solve non-existent emergency...\n");
@@ -281,7 +272,6 @@ void test_destroy_with_active_emergencies() {
 
 /*
  * Test: Many sequential operations
- * Stress tests with 10,000 raise/solve operations
  */
 void test_performance_many_operations() {
     printf("\n[PERFORMANCE] Testing many sequential operations...\n");
@@ -289,7 +279,6 @@ void test_performance_many_operations() {
     EmergencyNode_t node;
     EmergencyNode_init(&node);
 
-    // Perform 10000 operations
     for (int i = 0; i < 10000; i++) {
         uint8_t id = i % 64;
         EmergencyNode_raise(&node, id);
@@ -519,7 +508,6 @@ void test_byte_boundary_emergencies() {
     EmergencyNode_t node;
     EmergencyNode_init(&node);
 
-    // Test boundaries: 7, 8, 15, 16, 23, 24, etc.
     uint8_t boundaries[] = {7, 8, 15, 16, 23, 24, 31, 32, 39, 40, 47, 48, 55, 56, 63};
 
     for (int i = 0; i < sizeof(boundaries); i++) {
@@ -547,8 +535,6 @@ int main(void) {
     printf("     Using RIGHT-BICEP Testing Paradigm\n");
     printf("=================================================\n");
 
-    // Initialize the emergency system
-    // EmergencyNode_class_init();
 
     // Run all tests
     test_class_init_right();
@@ -556,7 +542,7 @@ int main(void) {
     test_raise_emergency_right();
     test_solve_emergency_right();
     test_raise_solve_inverse();
-    test_emergency_state_cross_check();  // FAILS
+    test_emergency_state_cross_check(); 
     test_boundary_conditions_error();
     test_solve_nonexistent_error();
     test_destroy_with_active_emergencies();
